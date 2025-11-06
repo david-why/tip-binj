@@ -25,8 +25,8 @@ const infractions = computed(() =>
 
     <h2 class="text-2xl font-bold mb-2">Recent Infractions</h2>
     <ul
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
       v-if="infractions.length"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     >
       <li v-for="infraction in infractions" :key="infraction.id">
         <UCard variant="subtle">

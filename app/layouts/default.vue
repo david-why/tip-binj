@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from "@nuxt/ui";
+import type { NavigationMenuItem } from '@nuxt/ui'
 
-const route = useRoute();
+const route = useRoute()
 
 const navItems = computed<NavigationMenuItem[]>(() => [
   {
-    label: "Home",
-    to: "/",
-    icon: "i-material-symbols-home-outline",
-    active: route.path === "/",
+    label: 'Home',
+    to: '/',
+    icon: 'i-material-symbols-home-outline',
+    active: route.path === '/',
   },
-]);
+])
 </script>
 
 <template>
@@ -30,6 +30,12 @@ const navItems = computed<NavigationMenuItem[]>(() => [
         orientation="vertical"
         class="-mx-2.5"
       />
+    </template>
+
+    <template #right>
+      <ULink href="/user">
+        <UIcon name="i-material-symbols-account-circle" />
+      </ULink>
     </template>
   </UHeader>
 

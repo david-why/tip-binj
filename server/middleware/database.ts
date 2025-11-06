@@ -14,6 +14,17 @@ class Database {
 
   // user
 
+  async getUserByID(id: number) {
+    const user = await this.db
+      .prepare('SELECT * FROM users WHERE id = ?')
+      .bind(id)
+      .first<DBUser>()
+    if (!user) {
+      throw new Error('User not found')
+    }
+    return user
+  }
+
   async getOrCreateUserByEmail(email: string) {
     const user = await this.db
       .prepare(
@@ -24,7 +35,12 @@ class Database {
     return user as DBUser
   }
 
-  async updateUser(userID: number, code: string, expires: number, name: string) {
+  async updateUser(
+    userID: number,
+    code: string,
+    expires: number,
+    name: string
+  ) {
     const result = await this.db
       .prepare(
         'UPDATE users SET login_code = ?, login_expires = ?, name = ? WHERE id = ?'
@@ -36,13 +52,25 @@ class Database {
     }
   }
 
-  async getUserByLoginCode(code: string) {
+  async getUserByLoginCode(email: string, code: string) {
     const now = Date.now()
+    console.log(email, code, now)
     const user = await this.db
-      .prepare('SELECT * FROM users WHERE login_code = ? AND login_expires > ?')
-      .bind(code, now)
+      .prepare(
+        'SELECT * FROM users WHERE email = ? AND login_code = ? AND login_expires > ?'
+      )
+      .bind(email.toLowerCase(), code, now)
       .first<DBUser>()
     return user
+  }
+
+  async clearLoginCode(userID: number) {
+    await this.db
+      .prepare(
+        'UPDATE users SET login_code = NULL, login_expires = NULL WHERE id = ?'
+      )
+      .bind(userID)
+      .run()
   }
 
   // infractions

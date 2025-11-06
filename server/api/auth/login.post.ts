@@ -31,10 +31,11 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  await event.context.db.addLoginCode(
+  await event.context.db.updateUser(
     user.id,
     code,
-    Date.now() + LOGIN_CODE_TIMEOUT_MS
+    Date.now() + LOGIN_CODE_TIMEOUT_MS,
+    res.name
   )
 
   return { success: true }

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS teachers (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    email TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,  -- lowercase
     name TEXT
 );
 
@@ -30,5 +30,10 @@ CREATE TABLE IF NOT EXISTS infractions (
     teacher_id INTEGER NOT NULL,
     type_id INTEGER NOT NULL,
     location_id INTEGER NOT NULL,
-    notes TEXT NOT NULL DEFAULT ''
+    notes TEXT,
+    created_at REAL NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (teacher_id) REFERENCES teachers(id),
+    FOREIGN KEY (type_id) REFERENCES types(id),
+    FOREIGN KEY (location_id) REFERENCES locations(id)
 );

@@ -3,11 +3,13 @@
 {
     "$schema": "node_modules/wrangler/config-schema.json",
     "name": "tip",
+    "pages_build_output_dir": "dist",
     "compatibility_date": "2025-11-01",
     "d1_databases": [
         {
             "binding": "DB",
-            "database_name": "tip-binj"
+            "database_name": "tip-binj",
+            "database_id": "c2698c40-912b-4484-8366-cca71d5a4851"
         }
     ]
 }

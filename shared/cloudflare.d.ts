@@ -5,6 +5,7 @@ declare module 'h3' {
       request: Request
       env: {
         DB: D1Database
+        NUXT_LOGIN_CODE_URL: string
       }
       context: ExecutionContext
     }

@@ -23,6 +23,6 @@
   },
   "devDependencies": {
     "@iconify-json/material-symbols": "^1.2.44",
-    "wrangler": "^4.45.4"
+    "wrangler": "^4.46.0"
   }
 }

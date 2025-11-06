@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     loginCodeUrl: '',
+    getNameUrl: '',
     secretKey: '',
   },
 })

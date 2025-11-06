@@ -73,6 +73,22 @@ class Database {
       .run()
   }
 
+  // type
+
+  async getTypes() {
+    const types = await this.db.prepare('SELECT * FROM types').all<DBType>()
+    return types.results
+  }
+
+  // location
+
+  async getLocations() {
+    const locations = await this.db
+      .prepare('SELECT * FROM locations')
+      .all<DBLocation>()
+    return locations.results
+  }
+
   // teacher
 
   async getTeachers() {
@@ -87,12 +103,27 @@ class Database {
       .prepare(
         'INSERT INTO teachers(email, name) VALUES(?, ?) ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name RETURNING *'
       )
-      .bind(email, name)
+      .bind(email.toLowerCase(), name)
       .first<DBTeacher>()
     return result as DBTeacher
   }
 
   // infractions
+
+  async createInfraction(
+    teacherID: number,
+    userID: number,
+    typeID: number,
+    locationID: number
+  ) {
+    const result = await this.db
+      .prepare(
+        'INSERT INTO infractions(teacher_id, user_id, type_id, location_id, created_at) VALUES(?, ?, ?, ?, ?) RETURNING *'
+      )
+      .bind(teacherID, userID, typeID, locationID, Date.now())
+      .first<DBInfraction>()
+    return result as DBInfraction
+  }
 
   async getInfractions(count: number = 20) {
     count = Math.min(count, 50)

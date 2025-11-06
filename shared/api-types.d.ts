@@ -11,3 +11,8 @@ interface GetInfractionResult {
   notes: string | null
   created_at: number
 }
+
+interface GetTagsResult {
+  types: DBType[]
+  locations: DBLocation[]
+}

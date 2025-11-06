@@ -6,6 +6,18 @@ interface DBUser {
   login_expires: number | null
 }
 
+interface DBType {
+  id: number
+  name: string
+  description: string | null
+}
+
+interface DBLocation {
+  id: number
+  name: string
+  description: string | null
+}
+
 interface DBTeacher {
   id: number
   email: string

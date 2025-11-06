@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
+import { FetchError } from 'ofetch'
 import { AddInfractionSchema } from '~~/shared/schemas'
 
 const toast = useToast()
 
-const { data: teachersData, error: teachersError } = await useFetch<
-  DBTeacher[]
->('/api/teachers')
+const {
+  data: teachersData,
+  error: teachersError,
+  refresh: refreshTeachers,
+} = await useFetch<DBTeacher[]>('/api/teachers')
 if (teachersError.value) {
   toast.add({
     color: 'error',
@@ -14,34 +17,74 @@ if (teachersError.value) {
     description: teachersError.value.message,
   })
 }
+const { data: tagsData, error: tagsError } = await useFetch<GetTagsResult>(
+  '/api/infractions/tags'
+)
+if (tagsError.value) {
+  toast.add({
+    color: 'error',
+    title: 'Failed to load types and locations',
+    description: tagsError.value.message,
+  })
+}
+
 const teachers = computed(() => teachersData.value || [])
-const newTeacherItem = { label: 'New teacher...', value: 0 }
-const teacherItems = computed(() => [
-  [newTeacherItem],
+const types = computed(() => tagsData.value?.types ?? [])
+const locations = computed(() => tagsData.value?.locations ?? [])
+
+const teacherItems = computed(() =>
   teachers.value.map((t) => ({
     label: t.name || t.email,
     value: t.id,
-  })),
-])
+  }))
+)
+const typeItems = computed(() =>
+  types.value.map((t) => ({
+    label: t.name,
+    value: t.id,
+  }))
+)
+const locationItems = computed(() =>
+  locations.value.map((t) => ({
+    label: t.name,
+    value: t.id,
+  }))
+)
 
-const selectedTeacher = ref<{ label: string; value: number }>(newTeacherItem)
-const newTeacherEmail = ref('')
+const selectedTeacher = ref<{ label: string; value: number }>()
+const selectedType = ref<{ label: string; value: number }>()
+const selectedLocation = ref<{ label: string; value: number }>()
 
 const state = computed(() => {
-  if (selectedTeacher.value.value == 0) {
-    return {
-      teacher_email: newTeacherEmail.value,
-    }
-  }
   return {
-    teacher_id: selectedTeacher.value.value,
+    teacher_id: selectedTeacher.value?.value || 0,
+    type_id: selectedType.value?.value || 0,
+    location_id: selectedLocation.value?.value || 0,
   }
 })
 
+async function onTeacherCreated(teacher: DBTeacher) {
+  await refreshTeachers()
+  selectedTeacher.value = teacherItems.value.find(
+    (item) => item.value === teacher.id
+  )
+}
+
 async function onSubmit(event: FormSubmitEvent<AddInfractionSchema>) {
   try {
-    // const res = await
-  } catch (e) {}
+    await $fetch<DBInfraction>('/api/infractions', {
+      method: 'POST',
+      body: event.data,
+    })
+    await navigateTo('/')
+  } catch (e) {
+    const message = e instanceof FetchError ? e.message : String(e)
+    toast.add({
+      color: 'error',
+      title: 'Failed to add infraction',
+      description: message,
+    })
+  }
 }
 </script>
 
@@ -55,7 +98,10 @@ async function onSubmit(event: FormSubmitEvent<AddInfractionSchema>) {
       :schema="AddInfractionSchema"
       @submit="onSubmit"
     >
-      <UFormField label="Teacher">
+      <UFormField name="teacher_id" label="Teacher">
+        <template #hint>
+          <AddTeacherModal @created="onTeacherCreated" />
+        </template>
         <UInputMenu
           v-model="selectedTeacher"
           class="w-full"
@@ -63,14 +109,19 @@ async function onSubmit(event: FormSubmitEvent<AddInfractionSchema>) {
         />
       </UFormField>
 
-      <UFormField v-if="selectedTeacher.value == 0" label="Teacher email">
-        <UInput v-model="newTeacherEmail" class="w-full" type="email" />
+      <UFormField name="type_id" label="Type">
+        <UInputMenu v-model="selectedType" class="w-full" :items="typeItems" />
+      </UFormField>
+
+      <UFormField name="location_id" label="Location">
+        <UInputMenu
+          v-model="selectedLocation"
+          class="w-full"
+          :items="locationItems"
+        />
       </UFormField>
 
       <UButton type="submit">Submit</UButton>
     </UForm>
-
-    <p>{{ teachers }}</p>
-    <p>{{ state }}</p>
   </div>
 </template>

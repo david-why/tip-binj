@@ -17,3 +17,13 @@ export const VerifyCodeSchema = z.object({
   code: z.string(),
 })
 export type VerifyCodeSchema = z.infer<typeof VerifyCodeSchema>
+
+export const AddTeacherSchema = z.object({
+  email: BINJEmail,
+})
+export type AddTeacherSchema = z.infer<typeof AddTeacherSchema>
+
+export const AddInfractionSchema = z.object({
+  teacher_id: z.number(),
+})
+export type AddInfractionSchema = z.infer<typeof AddInfractionSchema>

@@ -82,6 +82,16 @@ class Database {
     return teachers.results
   }
 
+  async createOrUpdateTeacher(email: string, name: string | null) {
+    const result = await this.db
+      .prepare(
+        'INSERT INTO teachers(email, name) VALUES(?, ?) ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name RETURNING *'
+      )
+      .bind(email, name)
+      .first<DBTeacher>()
+    return result as DBTeacher
+  }
+
   // infractions
 
   async getInfractions(count: number = 20) {

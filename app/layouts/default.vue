@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 
-const route = useRoute()
-
 const navItems = computed<NavigationMenuItem[]>(() => [
   {
     label: 'Home',
     to: '/',
     icon: 'i-material-symbols-home-outline',
-    active: route.path === '/',
+  },
+  {
+    label: 'Add infraction',
+    to: '/infractions/new',
+    icon: 'i-material-symbols-add-circle',
   },
 ])
 </script>

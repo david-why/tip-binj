@@ -21,7 +21,7 @@ const infractions = computed(() =>
 <template>
   <div>
     <h1 class="text-4xl font-bold mb-1">Welcome to TIP</h1>
-    <h2 class="text-xl mb-6">Where we record teacher infractions</h2>
+    <h2 class="mb-6">Where we record teacher infractions</h2>
 
     <h2 class="text-2xl font-bold mb-2">Recent Infractions</h2>
     <ul

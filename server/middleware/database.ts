@@ -73,6 +73,15 @@ class Database {
       .run()
   }
 
+  // teacher
+
+  async getTeachers() {
+    const teachers = await this.db
+      .prepare('SELECT * FROM teachers')
+      .all<DBTeacher>()
+    return teachers.results
+  }
+
   // infractions
 
   async getInfractions(count: number = 20) {

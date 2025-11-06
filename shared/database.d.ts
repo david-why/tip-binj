@@ -6,6 +6,12 @@ interface DBUser {
   login_expires: number | null
 }
 
+interface DBTeacher {
+  id: number
+  email: string
+  name: string | null
+}
+
 interface DBInfraction {
   id: number
   user_id: number

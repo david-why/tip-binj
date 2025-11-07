@@ -13,7 +13,8 @@ export default defineEventHandler(async (event) => {
     payload.teacher_id,
     event.context.session.data.userID,
     payload.type_id,
-    payload.location_id
+    payload.location_id,
+    payload.notes || null
   )
 
   return infraction

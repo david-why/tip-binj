@@ -114,13 +114,14 @@ class Database {
     teacherID: number,
     userID: number,
     typeID: number,
-    locationID: number
+    locationID: number,
+    notes: string | null = null
   ) {
     const result = await this.db
       .prepare(
-        'INSERT INTO infractions(teacher_id, user_id, type_id, location_id, created_at) VALUES(?, ?, ?, ?, ?) RETURNING *'
+        'INSERT INTO infractions(teacher_id, user_id, type_id, location_id, created_at, notes) VALUES(?, ?, ?, ?, ?, ?) RETURNING *'
       )
-      .bind(teacherID, userID, typeID, locationID, Date.now())
+      .bind(teacherID, userID, typeID, locationID, Date.now(), notes)
       .first<DBInfraction>()
     return result as DBInfraction
   }

@@ -54,12 +54,14 @@ const locationItems = computed(() =>
 const selectedTeacher = ref<{ label: string; value: number }>()
 const selectedType = ref<{ label: string; value: number }>()
 const selectedLocation = ref<{ label: string; value: number }>()
+const notes = ref('')
 
 const state = computed(() => {
   return {
     teacher_id: selectedTeacher.value?.value || 0,
     type_id: selectedType.value?.value || 0,
     location_id: selectedLocation.value?.value || 0,
+    notes: notes.value,
   }
 })
 
@@ -119,6 +121,10 @@ async function onSubmit(event: FormSubmitEvent<AddInfractionSchema>) {
           class="w-full"
           :items="locationItems"
         />
+      </UFormField>
+
+      <UFormField name="notes" label="Notes">
+        <UTextarea v-model="notes" class="w-full" :rows="5" />
       </UFormField>
 
       <UButton type="submit">Submit</UButton>

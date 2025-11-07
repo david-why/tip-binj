@@ -27,5 +27,6 @@ export const AddInfractionSchema = z.object({
   teacher_id: z.number().positive('A teacher is required'),
   type_id: z.number().positive('A type is required'),
   location_id: z.number().positive('A location is required'),
+  notes: z.string(),
 })
 export type AddInfractionSchema = z.infer<typeof AddInfractionSchema>

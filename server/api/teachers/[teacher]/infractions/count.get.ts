@@ -6,8 +6,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const teacher = await event.context.db.getTeacherByID(teacherID)
-  const infractions = await event.context.db.getInfractionsForTeacher(teacherID)
+  const count = await event.context.db.getInfractionCountForTeacher(teacherID)
 
-  return { ...teacher, infractions }
+  return { count }
 })

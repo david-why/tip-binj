@@ -18,8 +18,8 @@ if (error.value) {
   throw navigateTo('/infractions')
 }
 
-const { data: teacher } = await useFetch<GetSingleTeacherResult>(
-  `/api/teachers/${data.value?.teacher_id}`
+const { data: teacherInfractions } = await useFetch<GetInfractionResult[]>(
+  `/api/teachers/${data.value?.teacher_id}/infractions`
 )
 
 const infraction = computed(
@@ -77,8 +77,8 @@ const date = computed(() => new Date(infraction.value.created_at))
     </h2>
 
     <InfractionList
-      v-if="teacher?.infractions.length"
-      :infractions="teacher.infractions"
+      v-if="teacherInfractions?.length"
+      :infractions="teacherInfractions"
     />
   </div>
 </template>

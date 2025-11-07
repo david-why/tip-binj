@@ -173,9 +173,18 @@ WHERE infractions.id = ?
     return infraction
   }
 
-  async getInfractionsForTeacher(teacher_id: number) {
+  async getInfractionCountForTeacher(teacher_id: number) {
     const count = await this.db
-      .prepare(`
+      .prepare('SELECT COUNT(*) AS count FROM infractions WHERE teacher_id = ?')
+      .bind(teacher_id)
+      .first()
+    return count!.count as number
+  }
+
+  async getInfractionsForTeacher(teacher_id: number) {
+    const infractions = await this.db
+      .prepare(
+        `
 SELECT
     infractions.id,
     users.id AS user_id,
@@ -199,10 +208,11 @@ JOIN types ON infractions.type_id = types.id
 JOIN locations ON infractions.location_id = locations.id
 WHERE infractions.teacher_id = ?
 ORDER BY infractions.created_at DESC
-`)
+`
+      )
       .bind(teacher_id)
       .all<DBInfraction>()
-    return count.results
+    return infractions.results
   }
 
   async getInfractions(count: number = 20) {

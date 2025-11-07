@@ -56,6 +56,17 @@ const selectedType = ref<{ label: string; value: number }>()
 const selectedLocation = ref<{ label: string; value: number }>()
 const notes = ref('')
 
+const teacherCount = ref<number | null>(null)
+watch(selectedTeacher, async (value) => {
+  teacherCount.value = null
+  if (value) {
+    const { count } = await $fetch<{ count: number }>(
+      `/api/teachers/${value.value}/infractions/count`
+    )
+    teacherCount.value = count
+  }
+})
+
 const state = computed(() => {
   return {
     teacher_id: selectedTeacher.value?.value || 0,
@@ -100,7 +111,15 @@ async function onSubmit(event: FormSubmitEvent<AddInfractionSchema>) {
       :schema="AddInfractionSchema"
       @submit="onSubmit"
     >
-      <UFormField name="teacher_id" label="Teacher">
+      <UFormField
+        name="teacher_id"
+        label="Teacher"
+        :help="
+          typeof teacherCount === 'number'
+            ? `Total by ${selectedTeacher?.label || 'teacher'}: ${teacherCount}`
+            : undefined
+        "
+      >
         <template #hint>
           <AddTeacherModal @created="onTeacherCreated" />
         </template>

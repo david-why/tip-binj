@@ -53,7 +53,7 @@ const date = computed(() => new Date(infraction.value.created_at))
     </h1>
     <p class="mb-2">
       <span class="font-bold">Total infractions</span>:
-      {{ teacher?.infractions.length || 0 }}
+      {{ teacherInfractions?.length || 0 }}
     </p>
     <p class="mb-2">
       <span class="font-bold">Time</span>:

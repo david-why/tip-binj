@@ -74,11 +74,11 @@ async function onTeacherCreated(teacher: DBTeacher) {
 
 async function onSubmit(event: FormSubmitEvent<AddInfractionSchema>) {
   try {
-    await $fetch<DBInfraction>('/api/infractions', {
+    const infraction = await $fetch<DBInfraction>('/api/infractions', {
       method: 'POST',
       body: event.data,
     })
-    await navigateTo('/')
+    await navigateTo(`/infractions/${infraction.id}`)
   } catch (e) {
     const message = e instanceof FetchError ? e.message : String(e)
     toast.add({

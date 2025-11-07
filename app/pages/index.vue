@@ -10,12 +10,7 @@ if (error.value) {
   })
 }
 
-const infractions = computed(() =>
-  (data.value || []).map((i) => ({
-    ...i,
-    date: new Date(i.created_at),
-  }))
-)
+const infractions = computed(() => data.value || [])
 </script>
 
 <template>
@@ -24,26 +19,7 @@ const infractions = computed(() =>
     <h2 class="mb-6">Where we record teacher infractions</h2>
 
     <h2 class="text-2xl font-bold mb-2">Recent Infractions</h2>
-    <ul
-      v-if="infractions.length"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-    >
-      <li v-for="infraction in infractions" :key="infraction.id">
-        <UCard variant="subtle">
-          <h3 class="text-xl font-semibold mb-1">
-            {{ infraction.teacher_name }}
-          </h3>
-          <h4 class="mb-1">
-            {{ infraction.type_name }} @ {{ infraction.location_name }}
-          </h4>
-          <p>
-            <time :datetime="infraction.date.toISOString()">{{
-              infraction.date.toLocaleString()
-            }}</time>
-          </p>
-        </UCard>
-      </li>
-    </ul>
+    <InfractionList v-if="infractions.length" :infractions="infractions" />
     <p v-else>No recent infractions.</p>
 
     <p class="text-muted italic mt-6">

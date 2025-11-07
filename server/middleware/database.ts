@@ -91,6 +91,17 @@ class Database {
 
   // teacher
 
+  async getTeacherByID(id: number) {
+    const teacher = await this.db
+      .prepare('SELECT * FROM teachers WHERE id = ?')
+      .bind(id)
+      .first<DBTeacher>()
+    if (!teacher) {
+      throw new Error('Teacher not found')
+    }
+    return teacher
+  }
+
   async getTeachers() {
     const teachers = await this.db
       .prepare('SELECT * FROM teachers')
@@ -126,6 +137,74 @@ class Database {
     return result as DBInfraction
   }
 
+  async getInfractionByID(id: number) {
+    const infraction = await this.db
+      .prepare(
+        `
+SELECT
+    infractions.id,
+    users.id AS user_id,
+    users.email AS user_email,
+    users.name AS user_name,
+    teachers.id AS teacher_id,
+    teachers.email AS teacher_email,
+    teachers.name AS teacher_name,
+    types.id AS type_id,
+    types.name AS type_name,
+    types.description AS type_description,
+    locations.id AS location_id,
+    locations.name AS location_name,
+    locations.description AS location_description,
+    infractions.notes,
+    infractions.created_at
+FROM infractions
+JOIN users ON infractions.user_id = users.id
+JOIN teachers ON infractions.teacher_id = teachers.id
+JOIN types ON infractions.type_id = types.id
+JOIN locations ON infractions.location_id = locations.id
+WHERE infractions.id = ?
+`
+      )
+      .bind(id)
+      .first<GetInfractionResult>()
+    if (!infraction) {
+      throw new Error('Infraction not found')
+    }
+    return infraction
+  }
+
+  async getInfractionsForTeacher(teacher_id: number) {
+    const count = await this.db
+      .prepare(`
+SELECT
+    infractions.id,
+    users.id AS user_id,
+    users.email AS user_email,
+    users.name AS user_name,
+    teachers.id AS teacher_id,
+    teachers.email AS teacher_email,
+    teachers.name AS teacher_name,
+    types.id AS type_id,
+    types.name AS type_name,
+    types.description AS type_description,
+    locations.id AS location_id,
+    locations.name AS location_name,
+    locations.description AS location_description,
+    infractions.notes,
+    infractions.created_at
+FROM infractions
+JOIN users ON infractions.user_id = users.id
+JOIN teachers ON infractions.teacher_id = teachers.id
+JOIN types ON infractions.type_id = types.id
+JOIN locations ON infractions.location_id = locations.id
+WHERE infractions.teacher_id = ?
+ORDER BY infractions.created_at DESC
+`)
+      .bind(teacher_id)
+      .all<DBInfraction>()
+    return count.results
+  }
+
   async getInfractions(count: number = 20) {
     count = Math.min(count, 50)
     const infractions = await this.db
@@ -133,12 +212,16 @@ class Database {
         `
 SELECT
     infractions.id,
+    users.id AS user_id,
     users.email AS user_email,
     users.name AS user_name,
+    teachers.id AS teacher_id,
     teachers.email AS teacher_email,
     teachers.name AS teacher_name,
+    types.id AS type_id,
     types.name AS type_name,
     types.description AS type_description,
+    locations.id AS location_id,
     locations.name AS location_name,
     locations.description AS location_description,
     infractions.notes,
